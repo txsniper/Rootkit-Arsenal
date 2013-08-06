@@ -1,0 +1,6 @@
+NAME ExportDriver.sys
+
+EXPORTS
+   DllInitialize PRIVATE
+   DllUnload     PRIVATE
+   ExportRoutine

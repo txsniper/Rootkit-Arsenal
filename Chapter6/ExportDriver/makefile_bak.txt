@@ -1,0 +1,70 @@
+# +-----------------------------------------------------------+
+# |                                                           |
+# |           makefile.txt                                    |
+# +-----------------------------------------------------------+
+
+# [FILE Names]-------------------------------------------------
+SRC_FILES = usr.c
+OBJ_FILES = usr.obj
+DEBUG_NAME = winmgr
+RELEASE_NAME = winmgr
+
+# [Directories]------------------------------------------------
+DDK_DIR = D:WinDDK\7600.16385.1
+OUT_DIR = ..\..\bin
+
+# [INclude Files]----------------------------------------------
+DDK_INC = /I $(DDK_DIR)\inc
+CRT_INC = /I $(DDK_DIR)\inc\crt
+API_INC = /I $(DDK_DIR)\inc\api
+APP_INC = /I "..\inc"
+INCLUDES = $(DDK_INC) $(CRT_INC) $(API_INC) $(APP_INC)
+
+# [Library Paths]----------------------------------------------
+CRT_LIBS = /LIBPATH:$(DDK_DIR)\lib\crt\amd64
+WIN7_LIBS = /LIBPATH:$(DDK_DIR)\lib\win7\amd64
+LIBS = $(CRT_LIBS) $(WIN7_LIBS)
+
+# [Tools]------------------------------------------------------
+CC = cl.exe
+LINK = link.exe
+
+# [Tool arguments]---------------------------------------------
+CFLAGS = /c /nologo /FAcs $(INCLUDES) /W4
+CC_DEBUG_FLAGS = /Od /Fd$(DEBUG_NAME) /ZI
+CC_RELEASE_FLAGS = /O1 /DLOG_OFF
+
+LNK_FLAGS = /NOLOGO $(LIBS) /SUBSYSTEM:CONSOLE /VERSION:1.0 /WX
+LNK_DEBUG_FLAGS = /DEBUG /OUT:$(OUT_DIR)\$(DEBUG_NAME).EXE
+LNK_RELEASE_FLAGS = /OUT:$(OUT_DIR)\$(RELEASE_NAME).EXE
+
+# [Inference Rules]--------------------------------------------
+# if the BLDTYPE macro is defined, we want to include debug info
+!IFDEF BLDTYPE
+.c.obj::
+	$(CC) $(CFLAGS) $(CC_DEBUG_FLAGS) $<
+!ELSE
+.c.obj::
+	$(CC) $(CFLAGS) $(CC_RELEASE_FLAGS) $<
+!ENDIF
+
+# [Description Blocks]-----------------------------------------
+# .cod  listing file (assembly, machine code)
+# .obj  object code
+# .exe  final product
+# .pdb  debug symbols (debug build only)
+# .idb  VC++ Minimum Rebuild Dependency FILE (debug build only)
+# .ilk  incremental link file (debug build only)
+
+clean:
+	del *.cod
+	del *.obj
+	del *.pdb
+	del *.idb
+	del $(OUT_DIR)\*.pdb
+	del $(OUT_DIR)\*.ilk
+	del $(OUT_DIR)\*.exe
+debug:  $(OBJ_FILES)
+	$(LINK) $(LNK_FLAGS) $(LNK_DEBUG_FLAGS) $(OBJ_FILES)
+release: $(OBJ_FILES)
+	$(LINK) $(LNK_FLAGS) $(LNK_RELEASE_FLAGS) $(OBJ_FILES)
