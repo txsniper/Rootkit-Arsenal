@@ -1,0 +1,7 @@
+.CODE
+public NOP_FUNC 
+NOP_FUNC PROC
+    nop
+    ret
+NOP_FUNC ENDP
+END
